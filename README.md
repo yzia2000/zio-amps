@@ -11,7 +11,7 @@ This library is a ZIO wrapper over the 60east Java client, that lifts frequently
 operations and commands into functional effects that allows us to make efficient utilization
 of cpu cores while addressing concurrency limitations in a lock-less manner.
 
-# Why AMPS?
+## Why AMPS?
 
 One look at the AMPS feature set will likely convince a Kafka user that there are many desirable
 features like content filtering, adhoc merging wildcarding topics, aggregations while at the
@@ -21,7 +21,7 @@ You can imagine the dynamic capabilities of AMPS can really come in handy to red
 of touches you need to make the configuration or infrastructure, so the focus lies only
 on the business logic.
 
-# Why ZIO?
+## Why ZIO?
 
 Leaving aside that there will be an fs2 variant of this library coming soon,
 ZIO was chosen because it comes with very useful primitives and a single composable container
