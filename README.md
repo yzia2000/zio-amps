@@ -2,8 +2,8 @@
 
 _WIP_
 
-60east has a fantastic message processing solution, rich with not just the usual
-publisher-subscriber functionalities but also features that resemble a real time database
+60east has a fantastic message processing solution, [AMPS](https://www.crankuptheamps.com/amps/),
+rich with not just the usual publisher-subscriber functionalities but also features that resemble a real time database
 in the form of real-time materialized views with State of World (SOW),
 stateless performant content filtering, aggregations amongst many others.
 
