@@ -15,7 +15,8 @@ of cpu cores while addressing concurrency limitations in a lock-less manner.
 
 One look at the AMPS feature set will likely convince a Kafka user that there are many desirable
 features like content filtering, adhoc merging wildcarding topics, aggregations while at the
-same not having to worry about partitioning or repartition with ksqldb or kafka streams.
+same not having to worry about deploying a ksqldb or kafka streams applications for
+the smallest of use cases.
 
 You can imagine the dynamic capabilities of AMPS can really come in handy to reduce the number
 of touches you need to make the configuration or infrastructure, so the focus lies only
