@@ -13,7 +13,7 @@ object Client {
           ZIO.attempt {
             val client = new AmpsClient(config.name)
             client.connect(config.uri)
-            client.logon();
+            client.logon()
             client
           }
         )(client =>

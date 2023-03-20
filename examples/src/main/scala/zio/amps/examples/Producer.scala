@@ -12,11 +12,12 @@ object Producer extends ZIOAppDefault {
   val clientConfig =
     ClientConfig("tcp://localhost:9007/amps/json", "TradePublisher-Producer")
 
-  val clientLayer = ZLayer.succeed(clientConfig) >>> Client.live
+  val producerLayer =
+    ZLayer.succeed(clientConfig) >>> Client.live >>> Publisher.live
 
   def delay = ZIO.sleep(_)
 
-  def publishSampleTrade(id: String, client: AmpsClient) = {
+  def publishSampleTrade(id: String) = {
     val trade = Trade(id.toString(), 1000)
     val payload = trade.asJson.noSpaces
 
@@ -27,11 +28,6 @@ object Producer extends ZIOAppDefault {
 
   def run = ZStream
     .fromIterable(1 to 1000)
-    .foreach(id =>
-      for {
-        client <- ZIO.service[AmpsClient]
-        _ <- publishSampleTrade(id.toString, client)
-      } yield ()
-    )
-    .provide(clientLayer)
+    .foreach(id => publishSampleTrade(id.toString))
+    .provide(producerLayer)
 }
