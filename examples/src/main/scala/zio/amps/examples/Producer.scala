@@ -1,12 +1,16 @@
 package zio.amps.examples
 
+import com.crankuptheamps.client.{Client => AmpsClient}
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 import zio._
-import zio.stream._
 import zio.amps.client._
 import zio.amps.publisher._
-import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
+import zio.stream._
+
 import scala.util.Using
-import com.crankuptheamps.client.{Client => AmpsClient}
 
 object Producer extends ZIOAppDefault {
   val clientConfig =
@@ -23,7 +27,7 @@ object Producer extends ZIOAppDefault {
 
     ZIO.debug(payload) *>
       Publisher.publish("Trades", payload)
-      *> ZIO.sleep(100.millis)
+      *> ZIO.sleep(1.second)
   }
 
   def run = ZStream

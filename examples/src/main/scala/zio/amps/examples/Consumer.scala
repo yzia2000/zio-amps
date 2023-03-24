@@ -4,6 +4,7 @@ import com.crankuptheamps.client.Command
 import com.crankuptheamps.client.Message
 import com.crankuptheamps.client.MessageHandler
 import com.crankuptheamps.client.MessageStream
+import com.crankuptheamps.client.{Client => AmpsClient}
 import io.circe._
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -11,6 +12,7 @@ import io.circe.syntax._
 import zio._
 import zio.amps._
 import zio.amps.client._
+import zio.amps.processing._
 import zio.amps.subscriber._
 import zio.stream._
 
@@ -44,7 +46,11 @@ object Consumer extends ZIOAppDefault {
 
   val app = Subscriber
     .subscribe(subscriberBufferSize)(ampsTopic)
-    .mapZIOPar(maxConcurrentEffects)(Processor.process)
+    .via(
+      Processing.foreachZIOPar(maxConcurrentEffects)(
+        Processor.process
+      )
+    )
     .runDrain
 
   val clientLayer = ZLayer.succeed(clientConfig) >>> Client.live

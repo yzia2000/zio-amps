@@ -22,6 +22,13 @@ lazy val core = (project in file("core"))
     )
   )
 
+lazy val processing = (project in file("processing"))
+  .settings(
+    name := "zio-amps-processing",
+    crossScalaVersions := supportedScalaVersions
+  )
+  .dependsOn(core)
+
 lazy val zioAmpsExamples = (project in file("examples"))
   .settings(
     name := "zio-amps-examples",
@@ -30,7 +37,7 @@ lazy val zioAmpsExamples = (project in file("examples"))
     Global / connectInput := true,
     Global / fork := true
   )
-  .dependsOn(core)
+  .dependsOn(core, processing)
 
 lazy val root = (project in file("."))
   .aggregate(core, zioAmpsExamples)
