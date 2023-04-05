@@ -37,7 +37,7 @@ lazy val zioAmpsExamples = (project in file("examples"))
     Global / connectInput := true,
     Global / fork := true
   )
-  .dependsOn(core, processing)
+  .dependsOn(processing)
 
 lazy val root = (project in file("."))
   .aggregate(core, zioAmpsExamples)

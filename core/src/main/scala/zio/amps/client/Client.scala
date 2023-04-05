@@ -14,6 +14,7 @@ object Client {
             val client = new AmpsClient(config.name)
             client.connect(config.uri)
             client.logon()
+            client.setAutoAck(false)
             client
           }
         )(client =>

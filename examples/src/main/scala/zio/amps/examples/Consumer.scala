@@ -35,6 +35,10 @@ object Processor {
       case Left(err) => Console.printError(err)
     }
   }
+
+  def processFail(msg: Message): IO[Exception, Unit] = {
+    ZIO.fail(new Exception("We failed"))
+  }
 }
 
 object Consumer extends ZIOAppDefault {
@@ -44,10 +48,12 @@ object Consumer extends ZIOAppDefault {
   val clientConfig =
     ClientConfig("tcp://localhost:9007/amps/json", "TradePublisher-Consumer")
 
+  import Processing._
+
   val app = Subscriber
     .subscribe(subscriberBufferSize)(ampsTopic)
     .via(
-      Processing.foreachZIOPar(maxConcurrentEffects)(
+      Processing.foreachZIO(maxConcurrentEffects)(
         Processor.process
       )
     )
