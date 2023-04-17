@@ -2,7 +2,7 @@ lazy val scala3Version = "3.2.2"
 lazy val scala2Version = "2.13.10"
 lazy val supportedScalaVersions = List(scala2Version, scala3Version)
 
-lazy val zioVersion = "2.0.10"
+lazy val zioVersion = "2.0.12"
 lazy val circeVersion = "0.14.5"
 lazy val ampsVersion = "5.3.3.4"
 

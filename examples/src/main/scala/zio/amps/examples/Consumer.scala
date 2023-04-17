@@ -11,7 +11,6 @@ import io.circe.parser._
 import io.circe.syntax._
 import zio._
 import zio.amps._
-import zio.amps.client._
 import zio.amps.processing._
 import zio.amps.subscriber._
 import zio.stream._
@@ -41,27 +40,15 @@ object Processor {
   }
 }
 
-object Consumer extends ZIOAppDefault {
-  val subscriberBufferSize = 1000
+object Consumer {
+  val subscriberBufferSize = 1024 * 1024 * 2
   val maxConcurrentEffects = 1000
   val ampsTopic = "Trades"
-  val clientConfig =
-    ClientConfig("tcp://localhost:9007/amps/json", "TradePublisher-Consumer")
 
   import Processing._
 
-  val app = Subscriber
+  val app: ZIO[AmpsClient, Any, Unit] = Subscriber
     .subscribe(subscriberBufferSize)(ampsTopic)
-    .via(
-      Processing.foreachZIO(maxConcurrentEffects)(
-        Processor.process
-      )
-    )
+    .mapZIO(Processor.process)
     .runDrain
-
-  val clientLayer = ZLayer.succeed(clientConfig) >>> Client.live
-
-  def run = {
-    app.provide(clientLayer)
-  }
 }
