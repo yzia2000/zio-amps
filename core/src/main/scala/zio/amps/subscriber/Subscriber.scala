@@ -16,7 +16,7 @@ object Subscriber {
           // We are using ZStream async on AMPs async messsaging interface
           // on the client since this interface allows us to add backpressure.
           val eventHandler = new MessageHandler {
-            def invoke(msg: Message) = {
+            def invoke(msg: Message): Unit = {
               // AMPS client library mututates the same object.
               // This can cause reference issues and async queue message
               // overriding.
