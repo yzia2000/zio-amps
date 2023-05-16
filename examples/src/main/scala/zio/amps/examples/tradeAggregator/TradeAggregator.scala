@@ -11,6 +11,8 @@ import java.util.UUID
 object TradeAggregator {
   val subscriberBufferSize = 1024 * 1024 * 2
 
+  val subscriptionId = "TradeAggregator-Example"
+
   case class AggregateKey(symbol: String)
 
   object AggregateKey {
@@ -147,7 +149,9 @@ object TradeAggregator {
   }
 
   val app: ZIO[AmpsClient, Any, Unit] = Subscriber
-    .subscribe(subscriberBufferSize)(TradeAggregatorExampleMain.ampsTopic)
+    .subscribe(subscriberBufferSize)(
+      SubscriptionOptions(TradeAggregatorExampleMain.ampsTopic, subscriptionId)
+    )
     .mapZIO(msg => ZIO.fromEither(msg.getData.fromJson[EventMessage]))
     .mapAccum[Map[AggregateKey, Committable[AggregateList]], Option[
       Map[AggregateKey, Committable[AggregateList]]
@@ -178,8 +182,6 @@ object TradeAggregator {
     .collectSome
     .mapConcatChunk(aggMap => Chunk(aggMap.toList.map(x => Aggregate(x))))
     .run {
-      ZSink.foreach { x =>
-        Console.printLine(x)
-      }
+      ZSink.foreach(agg => Console.printLine(agg.toString))
     }
 }

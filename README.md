@@ -33,3 +33,7 @@ like fetch messages in parallel, transforming them in parallel and updating stat
 in parallel, but because we are investing in immutability and functional composition, we
 do not suffer from the same race conditions, lossy updates and non-determinism that
 non-functional programming often does.
+
+## Documentation
+
+WIP - Take a look at the examples module for now

@@ -18,7 +18,7 @@ object TradeAggregatorExampleMain extends ZIOAppDefault {
     (Producer.app.logError.fork *> TradeAggregator.app.logError.fork *> ZIO.never)
       .provide(
         clientConfig,
-        Client.live,
+        Client.live(),
         Publisher.live
       )
   }

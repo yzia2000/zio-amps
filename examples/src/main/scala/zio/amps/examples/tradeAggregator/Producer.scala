@@ -11,7 +11,7 @@ object Producer {
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
       trade.toJson
-    ) *> ZIO.sleep(10.millis)
+    )
   }
 
   def publishAmendTrade(id: String): ZIO[Publisher, Throwable, Unit] = {
@@ -19,7 +19,7 @@ object Producer {
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
       trade.toJson
-    ) *> ZIO.sleep(10.millis)
+    )
   }
 
   def publishCancelTrade(id: String): ZIO[Publisher, Throwable, Unit] = {
@@ -27,14 +27,14 @@ object Producer {
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
       trade.toJson
-    ) *> ZIO.sleep(10.millis)
+    )
   }
 
   def triggerAggregateEmission: ZIO[Publisher, Throwable, Unit] = {
     ZIO.debug(EmitAggregate.toString) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
       (EmitAggregate: EventMessage).toJson
-    ) *> ZIO.sleep(10.millis)
+    )
   }
 
   val testTradeIds = (1 to 10)

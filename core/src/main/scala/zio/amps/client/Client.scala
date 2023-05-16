@@ -5,22 +5,25 @@ import zio.stream._
 import com.crankuptheamps.client.{Client => AmpsClient}
 
 object Client {
-  val live: ZLayer[ClientConfig, Throwable, AmpsClient] =
+  def live(
+      ampsClient: ClientConfig => AmpsClient = config =>
+        new AmpsClient(config.name)
+  ): ZLayer[ClientConfig, Throwable, AmpsClient] =
     ZLayer.scoped {
       for {
-        config <- ZIO.service[ClientConfig]
+        live <- ZIO.service[ClientConfig]
         resource <- ZIO.acquireRelease(
           ZIO.attempt {
-            val client = new AmpsClient(config.name)
-            client.connect(config.uri)
+            val client = ampsClient(live)
+            client.connect(live.uri)
             client.logon()
-            client.setAutoAck(false)
             client
           }
         )(client =>
-          ZIO.debug(s"Closing client ${config.name}") *> ZIO.succeed(
+          ZIO.debug(s"Closing client ${live.name}") *> ZIO.succeed {
+            client.unsubscribe()
             client.close()
-          )
+          }
         )
       } yield resource
     }

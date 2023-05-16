@@ -3,15 +3,23 @@ package zio.amps.subscriber
 import zio._
 import zio.stream._
 import com.crankuptheamps.client._
+import java.util.UUID
+
+case class SubscriptionOptions(
+    topic: String,
+    subId: String = UUID.randomUUID().toString(),
+    filter: Option[String] = None,
+    options: Option[String] = None,
+    timeout: Option[Long] = None
+)
 
 object Subscriber {
   def subscribe(buffer: Int)(
-      topic: String,
-      timeout: Int = 10000
+      options: SubscriptionOptions
   ): ZStream[Client, Throwable, Message] =
     for {
       client <- ZStream.service[Client]
-      stream <- ZStream.async[Client, Throwable, Message](
+      stream <- ZStream.asyncZIO[Client, Throwable, Message](
         cb => {
           // We are using ZStream async on AMPs async messsaging interface
           // on the client since this interface allows us to add backpressure.
@@ -23,7 +31,17 @@ object Subscriber {
               cb(ZIO.succeed(Chunk(msg.copy())))
             }
           }
-          client.subscribe(eventHandler, topic, timeout)
+
+          val command = new Command(Message.Command.Subscribe)
+            .setTopic(options.topic)
+            .setSubId(options.subId)
+          options.filter.foreach(command.setFilter)
+          options.options.foreach(command.setOptions)
+          options.timeout.foreach(command.setTimeout)
+          client.executeAsync(command, eventHandler)
+          ZIO.logInfo(
+            s"Created subscription with id ${options.subId} for topic ${options.topic}"
+          )
         },
         buffer
       )
