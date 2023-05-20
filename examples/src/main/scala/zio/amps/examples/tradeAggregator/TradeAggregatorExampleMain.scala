@@ -6,9 +6,9 @@ import com.crankuptheamps.client.{
   HAClient,
   LoggedBookmarkStore,
   MemoryBookmarkStore,
-  Client as AmpsClient
+  Client => AmpsClient
 }
-import zio.*
+import zio._
 import zio.amps.client.{Client, ClientConfig, HAClientConfig}
 import zio.amps.publisher.Publisher
 import zio.amps.subscriber.Subscriber

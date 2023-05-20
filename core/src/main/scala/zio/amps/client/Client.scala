@@ -1,8 +1,12 @@
 package zio.amps.client
 
-import com.crankuptheamps.client.{DefaultServerChooser, HAClient, Client as AmpsClient}
-import zio.*
-import zio.stream.*
+import com.crankuptheamps.client.{
+  DefaultServerChooser,
+  HAClient,
+  Client => AmpsClient
+}
+import zio._
+import zio.stream._
 
 object Client {
   def simpleLive(
@@ -40,7 +44,7 @@ object Client {
     val client = new HAClient(config.name)
     client.setPublishStore(config.publishLogStore)
     client.setBookmarkStore(config.subscribeLogStore)
-    val chooser = config.serverChooser getOrElse  {
+    val chooser = config.serverChooser getOrElse {
       val chooser = new DefaultServerChooser()
       config.uris.foreach(chooser.add)
       chooser

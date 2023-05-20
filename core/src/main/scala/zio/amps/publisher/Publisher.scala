@@ -1,7 +1,13 @@
 package zio.amps.publisher
 
-import com.crankuptheamps.client.{Command, FailedWriteHandlerV4, Message, MessageHandler, Client as AmpsClient}
-import zio.*
+import com.crankuptheamps.client.{
+  Command,
+  FailedWriteHandlerV4,
+  Message,
+  MessageHandler,
+  Client => AmpsClient
+}
+import zio._
 
 case class Publisher(client: AmpsClient, sem: Semaphore)
 

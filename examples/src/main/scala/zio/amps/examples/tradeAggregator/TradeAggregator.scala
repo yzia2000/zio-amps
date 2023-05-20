@@ -1,14 +1,13 @@
 package zio.amps.examples.tradeAggregator
 
-import com.crankuptheamps.client.{Message, Client as AmpsClient}
+import com.crankuptheamps.client.{Message, Client => AmpsClient}
 import com.crankuptheamps.client.Client.Bookmarks
-import zio.*
-import zio.amps.subscriber.*
-import zio.json.*
-import zio.stream.*
+import zio._
+import zio.amps.subscriber._
+import zio.json._
+import zio.stream._
 
 import java.util.UUID
-import scala.annotation.targetName
 
 object TradeAggregator {
   private val subscriberBufferSize: Int = 1024 * 1024 * 2

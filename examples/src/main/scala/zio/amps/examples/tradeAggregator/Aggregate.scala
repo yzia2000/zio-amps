@@ -1,6 +1,6 @@
 package zio.amps.examples.tradeAggregator
 
-import zio.json.*
+import zio.json._
 
 sealed trait Aggregate
 case class NewAggregate(

@@ -15,7 +15,6 @@ sealed trait ClientConfig {
   def name: String
 }
 
-
 final case class HAClientConfig(
     uris: List[String],
     name: String,
