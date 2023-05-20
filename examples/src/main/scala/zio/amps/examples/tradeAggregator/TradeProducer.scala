@@ -5,12 +5,12 @@ import zio.amps.publisher._
 import zio.json._
 import zio.stream._
 
-object Producer {
+object TradeProducer {
   def publishNewTrade(id: String): ZIO[Publisher, Throwable, Unit] = {
     val trade: EventMessage = NewTrade(id, "AAPL", 1000, 1000)
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
-      trade.toJson
+      PublishPayload(trade.toJson, sowKey = Some(id))
     )
   }
 
@@ -18,7 +18,7 @@ object Producer {
     val trade: EventMessage = AmendTrade(id, id, "AAPL", 500, 1000)
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
-      trade.toJson
+      PublishPayload(trade.toJson, sowKey = Some(id))
     )
   }
 
@@ -26,14 +26,14 @@ object Producer {
     val trade: EventMessage = CancelTrade(id, id)
     ZIO.debug(trade.toJson) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
-      trade.toJson
+      PublishPayload(trade.toJson, sowKey = Some(id))
     )
   }
 
   def triggerAggregateEmission: ZIO[Publisher, Throwable, Unit] = {
     ZIO.debug(EmitAggregate.toString) *> Publisher.publish(
       TradeAggregatorExampleMain.ampsTopic,
-      (EmitAggregate: EventMessage).toJson
+      PublishPayload((EmitAggregate: EventMessage).toJson)
     )
   }
 
