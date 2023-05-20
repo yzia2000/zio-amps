@@ -7,9 +7,10 @@ import java.util.UUID
 
 case class SubscriptionOptions(
     topic: String,
-    subId: String = UUID.randomUUID().toString(),
+    subId: String = UUID.randomUUID().toString,
     filter: Option[String] = None,
     options: Option[String] = None,
+    bookmark: Option[String] = None,
     timeout: Option[Long] = None
 )
 
@@ -38,6 +39,7 @@ object Subscriber {
           options.filter.foreach(command.setFilter)
           options.options.foreach(command.setOptions)
           options.timeout.foreach(command.setTimeout)
+          options.bookmark.foreach(command.setBookmark)
           client.executeAsync(command, eventHandler)
           ZIO.logInfo(
             s"Created subscription with id ${options.subId} for topic ${options.topic}"

@@ -9,16 +9,24 @@ object Client {
       ampsClient: ClientConfig => AmpsClient = config =>
         new AmpsClient(config.name)
   ): ZLayer[ClientConfig, Throwable, AmpsClient] =
+    liveZIO(config => ZIO.attempt(ampsClient(config)))
+
+  def liveZIO(
+      ampsClient: ClientConfig => Task[AmpsClient] = config =>
+        ZIO.attempt(new AmpsClient(config.name))
+  ): ZLayer[ClientConfig, Throwable, AmpsClient] =
     ZLayer.scoped {
       for {
         live <- ZIO.service[ClientConfig]
         resource <- ZIO.acquireRelease(
-          ZIO.attempt {
-            val client = ampsClient(live)
-            client.connect(live.uri)
-            client.logon()
-            client
-          }
+          for {
+            client <- ampsClient(live)
+            _ <- ZIO.attempt {
+              client.connect(live.uri)
+              client.logon()
+              client
+            }
+          } yield client
         )(client =>
           ZIO.debug(s"Closing client ${live.name}") *> ZIO.succeed {
             client.unsubscribe()

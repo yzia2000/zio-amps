@@ -1,6 +1,8 @@
 package zio.amps.examples.tradeAggregator
 
-import zio.json._
+import zio.json.*
+
+import java.time.LocalDateTime
 
 sealed trait EventMessage
 
@@ -10,13 +12,16 @@ sealed trait Trade extends EventMessage {
   def parentId: String
   def price: BigDecimal
   def qty: BigDecimal
+
+  def transactionTime: LocalDateTime
 }
 
 @jsonHint("new-trade") final case class NewTrade(
     id: String,
     symbol: String,
     price: BigDecimal,
-    qty: BigDecimal
+    qty: BigDecimal,
+    transactionTime: LocalDateTime = LocalDateTime.now
 ) extends Trade {
   def parentId: String = id
 }
@@ -26,12 +31,14 @@ sealed trait Trade extends EventMessage {
     parentId: String,
     symbol: String,
     price: BigDecimal,
-    qty: BigDecimal
+    qty: BigDecimal,
+    transactionTime: LocalDateTime = LocalDateTime.now
 ) extends Trade
 
 @jsonHint("cancel-trade") final case class CancelTrade(
     id: String,
-    parentId: String
+    parentId: String,
+    transactionTime: LocalDateTime = LocalDateTime.now
 ) extends EventMessage
 
 object Trade {
@@ -41,7 +48,7 @@ object Trade {
         _.parentId
       }
       .values
-      .flatMap(arr => arr.sorted.headOption)
+      .flatMap(arr => arr.sorted.reverse.headOption)
       .toList
   }
 }
@@ -52,8 +59,8 @@ object EventMessage {
   implicit val decoder: JsonDecoder[EventMessage] =
     DeriveJsonDecoder.gen[EventMessage]
 
-  implicit val ord: Ordering[Trade] = Ordering.by[Trade, Int] {
-    case _: AmendTrade => 1
-    case _: NewTrade   => 2
+  implicit val ord: Ordering[Trade] = Ordering.by[Trade, LocalDateTime] {
+    trade =>
+      trade.transactionTime
   }
 }
