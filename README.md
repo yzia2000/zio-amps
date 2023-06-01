@@ -1,5 +1,7 @@
 # ZIO AMPS
 
+_The use of AMPS Clients in a production environment requires an AMPS Server license._
+
 _WIP_
 
 60east has a fantastic message processing solution, [AMPS](https://www.crankuptheamps.com/amps/),
