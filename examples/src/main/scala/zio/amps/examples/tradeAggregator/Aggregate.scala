@@ -2,7 +2,10 @@ package zio.amps.examples.tradeAggregator
 
 import zio.json._
 
-sealed trait Aggregate
+sealed trait Aggregate {
+  def id: String
+}
+
 case class NewAggregate(
     id: String,
     key: AggregateKey,

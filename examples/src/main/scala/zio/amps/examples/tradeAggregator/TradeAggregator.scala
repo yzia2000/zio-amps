@@ -8,9 +8,12 @@ import zio.json._
 import zio.stream._
 
 import java.util.UUID
+import zio.amps.publisher._
 
 object TradeAggregator {
   private val subscriberBufferSize: Int = 1024 * 1024 * 2
+
+  final val aggregateSowTopic = "/zio/amps/examples/tradeAggregator/aggregates"
 
   type AggregateListStorage = Map[AggregateKey, Committable[AggregateList]]
 
@@ -21,13 +24,18 @@ object TradeAggregator {
       bookmark = Some(Bookmarks.EPOCH) // We want to aggregate from bookmark 0
     )
 
-  val app: ZIO[AmpsClient, Any, Unit] = Subscriber
+  val app: ZIO[AmpsClient & Publisher, Any, Unit] = Subscriber
     .subscribe(subscriberBufferSize)(
       subscriptionOptions
     )
-    .mapAccumZIO[AmpsClient, Throwable, AggregateListStorage, Option[
-      AggregateListStorage
-    ]](
+    .mapAccumZIO[
+      AmpsClient & Publisher,
+      Throwable,
+      AggregateListStorage,
+      Option[
+        AggregateListStorage
+      ]
+    ](
       Map.empty
     )((acc, msg) =>
       for {
@@ -63,8 +71,15 @@ object TradeAggregator {
       } yield result
     )
     .collectSome
-    .mapConcatChunk(aggMap => Chunk(aggMap.toList.map(x => Aggregate(x))))
+    .mapConcatChunk(aggMap =>
+      Chunk.fromIterable(aggMap.toList.map(Aggregate.apply))
+    )
     .run {
-      ZSink.foreach(agg => Console.printLine(agg.toJson))
+      ZSink.foreach(agg =>
+        Publisher.publish(
+          aggregateSowTopic,
+          PublishPayload(data = agg.toJson, sowKey = Some(agg.id))
+        )
+      )
     }
 }

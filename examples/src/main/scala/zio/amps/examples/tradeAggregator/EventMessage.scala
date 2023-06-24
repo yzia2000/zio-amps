@@ -59,6 +59,11 @@ object EventMessage {
   implicit val decoder: JsonDecoder[EventMessage] =
     DeriveJsonDecoder.gen[EventMessage]
 
+  implicit val tradeEncoder: JsonEncoder[Trade] =
+    DeriveJsonEncoder.gen[Trade]
+  implicit val tradeDecoder: JsonDecoder[Trade] =
+    DeriveJsonDecoder.gen[Trade]
+
   implicit val ord: Ordering[Trade] = Ordering.by[Trade, LocalDateTime] {
     trade =>
       trade.transactionTime

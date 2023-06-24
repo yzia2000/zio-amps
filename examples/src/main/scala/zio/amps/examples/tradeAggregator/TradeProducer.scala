@@ -8,10 +8,11 @@ import zio.stream._
 object TradeProducer {
   def publishNewTrade(id: String): ZIO[Publisher, Throwable, Unit] = {
     val trade: EventMessage = NewTrade(id, "AAPL", 1000, 1000)
-    ZIO.debug(trade.toJson) *> Publisher.publish(
-      TradeAggregatorExampleMain.ampsTopic,
-      PublishPayload(trade.toJson, sowKey = Some(id))
-    )
+    ZIO.debug(trade.toJson) *> Publisher
+      .publish(
+        TradeAggregatorExampleMain.ampsTopic,
+        PublishPayload(trade.toJson, sowKey = Some(id))
+      )
   }
 
   def publishAmendTrade(id: String): ZIO[Publisher, Throwable, Unit] = {
