@@ -9,7 +9,7 @@ import com.crankuptheamps.client.{
 }
 import zio._
 
-case class Publisher(client: AmpsClient, sem: Semaphore)
+case class Publisher(client: AmpsClient, private val sem: Semaphore)
 
 case class PublishFailedException(msg: String = "Failed to publish message")
     extends Exception(msg)
